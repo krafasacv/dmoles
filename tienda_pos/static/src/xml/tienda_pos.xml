@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+ <t t-extend="OrderReceipt">
+       <t t-jquery=".pos-receipt .pos-receipt-order-data" t-operation='append'>
+           <t t-if="receipt.total_with_tax > 500">
+                    <div style="font-weight:bold;border-top: 1px dotted black;text-align: justify;">
+                       <p>Con motivo del "MES DEL MOLE", obten un 10% de descuento NO ACUMULABLE, en el consumo de tus alimentos al presentar este cupón en el mejor restaurante de San Pedro Atocpan "LA JOYA"</p>
+                       <img src="/tienda_pos/static/src/img/urllocaJoya.png" width="100" height="100"/>
+                   </div>
+           </t>         
+        </t>
+   </t>
+</templates>
