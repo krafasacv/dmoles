@@ -2,6 +2,121 @@
 <templates id="template" xml:space="preserve">
 
  <t t-extend="OrderReceipt">
+        <t t-jquery=".pos-receipt .pos-receipt-contact" t-operation='replace'>
+           
+            <div class="pos-receipt-contact">
+                <div>
+                    JUAN A. MANCERA V.
+                </div>
+                <div style="font-size: 20px;">
+                    <t t-esc='receipt.company.name' />
+                </div>
+                <div>
+                    Calle Hidalgo No. 66
+                </div>
+                <div>
+                    Col. San Pedro Atocpan
+                </div>
+                <div>
+                    Milpa Alta, Ciudad de Mexico
+                </div>
+                <div>
+                    C.P. 12200
+                </div>
+                <div>
+                    R.F.C. MAVJ961228MA8
+                </div>
+                <t t-if='receipt.company.phone'>
+                    <div>Tel:<t t-esc='receipt.company.phone' /></div>
+                </t>
+                
+                <t t-if='receipt.company.email'>
+                    <div><t t-esc='receipt.company.email' /></div>
+                </t>
+                <t t-if='receipt.company.website'>
+                    <div><t t-esc='receipt.company.website' /></div>
+                </t>
+                <t t-if='receipt.header_html'>
+                    <t t-raw='receipt.header_html' />
+                </t>
+                <t t-if='!receipt.header_html and receipt.header'>
+                    <div><t t-esc='receipt.header' /></div>
+                </t>
+                <br />
+                <t t-if='receipt.cashier'>
+                    <div class='cashier'>
+                        <div>--------------------------------</div>
+                        <div>Lo atendió : <t t-esc='receipt.cashier' /></div>
+                    </div>
+                </t>
+            </div>
+        </t>
+     
+         <t t-jquery=".pos-receipt .orderlines" t-operation='replace'>
+             
+             
+             <div class='orderlines'>
+                <t t-foreach='receipt.orderlines' t-as='line'>
+                    <t t-set='simple' t-value='(line.discount === 0 and line.unit_name === "Units" and line.quantity === 1 and !discount_to_show and !(line.display_discount_policy == "without_discount" &amp;&amp; line.price != line.price_lst))' />
+                    
+                    <t t-if='simple'>
+                        <div><t t-esc='line.product_name_wrapped[0]' /><span t-esc='widget.format_currency_no_symbol(line.price_display)' class="price_display pos-receipt-right-align"/></div><t t-call="OrderReceiptWrappedProductNameLines"/>
+                    </t>
+                    
+                    <t t-if='!simple'>
+                        <div >
+                            <t t-esc="Math.round(line.quantity * Math.pow(10, pos.dp['Product Unit of Measure'])) / Math.pow(10, pos.dp['Product Unit of Measure'])"/>
+                            <t t-if='line.unit_name !== "Units"' t-esc='line.unit_name'/>
+                            <t t-esc='line.product_name_wrapped[0]'/>
+                        </div>
+                        <t t-call="OrderReceiptWrappedProductNameLines"/>
+                        <t t-if="line.display_discount_policy == 'without_discount' &amp;&amp; line.price != line.price_lst">
+                            <div class="pos-receipt-left-padding">
+                                <t t-esc="widget.format_currency_no_symbol(line.price_lst)" />
+                                -><t t-esc="widget.format_currency_no_symbol(line.price)" />
+                            </div>
+                        </t>
+                        <t t-elif='line.discount !== 0'>
+                            <div class="pos-receipt-left-padding">
+                                <t t-if="pos.config.iface_tax_included === 'total'">
+                                    <t t-esc="widget.format_currency_no_symbol(line.price_with_tax_before_discount)"/>
+                                </t>
+                                <t t-else="">
+                                    <t t-esc="widget.format_currency_no_symbol(line.price)"/>
+                                </t>
+                            </div>
+                        </t>
+                        <t t-if='line.discount !== 0'>
+                            <div class="pos-receipt-left-padding">
+                                Discount: <t t-esc='line.discount' />%
+                            </div>
+                        </t>
+                        <div class="pos-receipt-left-padding">
+                            Precio Unitario 
+                            <t t-esc='widget.format_currency_no_symbol(line.price_display_one)' />
+                            = 
+                            <span class="price_display pos-receipt-right-align">
+                                <t t-esc='widget.format_currency_no_symbol(line.price_display)'/>
+                            </span>
+                        </div>
+                    </t>
+                </t>
+            </div>
+             
+             
+     
+     
+     </t>
+     
+     
+     <t t-jquery=".pos-receipt .pos-receipt-order-data" t-operation='replace'>
+            <div class="pos-receipt-order-data">
+                <div style="font-size:15px"><t t-esc='receipt.name' /></div>
+                <div style="font-size:15px"><t t-esc='receipt.date.localestring' /></div>
+            </div>       
+        </t>
+     
+     
        <t t-jquery=".pos-receipt .pos-receipt-order-data" t-operation='append'>
            <t t-if="receipt.total_with_tax > 500">
                     <div style="font-weight:bold;border-top: 1px dotted black;text-align: justify;">
@@ -11,4 +126,93 @@
            </t>         
         </t>
    </t>
+    
+    <t t-extend="SetPricelistButton">
+       <t t-jquery=".o_pricelist_button" t-operation='replace'>
+        <div class='control-button o_pricelist_button' style="display: none;">
+            <i class='fa fa-th-list' role="img" aria-label="Price list" title="Price list"/> <t t-esc='widget.get_current_pricelist_name()'/>
+        </div>
+        </t>
+   </t>
+<t t-extend="PaymentScreen-Numpad">
+    <t t-jquery=".numpad" t-operation='replace'>
+        
+        
+        <div class="numpad">
+            <button class="input-button number-char" data-action='1'>1</button>
+            <button class="input-button number-char" data-action='2'>2</button>
+            <button class="input-button number-char" data-action='3'>3</button>
+            <button class="mode-button" data-action='+20'>+20</button>
+            <br />
+            <button class="input-button number-char" data-action='4'>4</button>
+            <button class="input-button number-char" data-action='5'>5</button>
+            <button class="input-button number-char" data-action='6'>6</button>
+            <button class="mode-button" data-action='+50'>+50</button>
+            <br />
+            <button class="input-button number-char" data-action='7'>7</button>
+            <button class="input-button number-char" data-action='8'>8</button>
+            <button class="input-button number-char" data-action='9'>9</button>
+            <button class="mode-button" data-action='+100'>+100</button>
+            <br />
+            <button class="input-button numpad-char" data-action='-' >+/-</button>
+            <button class="input-button number-char" data-action='0'>0</button>
+            <button class="input-button number-char" t-att-data-action='widget.decimal_point'><t t-esc='widget.decimal_point'/></button>
+            <button class="input-button numpad-backspace" data-action='BACKSPACE' >
+                <img src="/point_of_sale/static/src/img/backspace.png" width="24" height="21" alt="Backspace"/>
+            </button>
+        </div>
+        
+        
+        
+    </t>
+</t>
+    
+<t t-extend="NumpadWidget">
+    <t t-jquery=".numpad" t-operation='replace'>
+        
+        
+        <div class="numpad">
+            <button class="input-button number-char">1</button>
+            <button class="input-button number-char">2</button>
+            <button class="input-button number-char">3</button>
+            <button class="mode-button" data-mode='quantity'>Qty</button>
+            <br />
+            <button class="input-button number-char">4</button>
+            <button class="input-button number-char">5</button>
+            <button class="input-button number-char">6</button>
+            <button class="mode-button" data-mode='quantity'></button>
+            <br />
+            <button class="input-button number-char" data-action='7'>7</button>
+            <button class="input-button number-char" data-action='8'>8</button>
+            <button class="input-button number-char" data-action='9'>9</button>
+            <button class="mode-button" data-mode='quantity'></button>
+            <br />
+            <button class="input-button numpad-char" data-action='00' >00</button>
+            <button class="input-button number-char" data-action='0'>0</button>
+            <button class="input-button number-char">.</button>
+            <button class="input-button numpad-backspace" data-action='BACKSPACE' >
+                <img src="/point_of_sale/static/src/img/backspace.png" width="24" height="21" alt="Backspace"/>
+            </button>
+        </div>
+        
+        
+        
+    </t>
+</t>
+
+
+<t t-extend="PaymentScreenWidget">
+    <t t-jquery=".payment-screen .right-content .payment-buttons .js_email" t-operation='replace'>
+        <div class='button js_email'>
+            
+            <t t-if="widget.pos.get_client()">
+                <i class='fa fa-inbox' />
+                Correo
+            </t>
+        </div>  
+    </t>
+</t>                    
+   
+    
+
 </templates>
