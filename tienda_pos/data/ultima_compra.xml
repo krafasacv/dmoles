@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>    
+    <data>
+        <!--
+        Agrega una acción de servidor para que cuando se haga una compra el sistema actulice la información en los productos de la ultima compra: fecha, cantidad, precio 
+        -->
+    	<record id="ultima_compra" model="ir.actions.server">
+        	<field name="name">Ultima Compra</field>
+        	<field name="model_id" ref="account_asset.model_account_move"/>
+            <field name="usage">base_automation</field>
+        	<field name="state">code</field>  
+            <field name="code">                
+for ptids in record.invoice_line_ids:
+    p = ptids.price_unit
+    ptids.product_id.product_tmpl_id['x_studio_fecha_ultima_compra'] = ptids.date
+    ptids.product_id.product_tmpl_id['x_studio_ultima_cantidad_comprada'] = ptids.quantity
+
+    if ptids.product_id.product_tmpl_id.x_studio_unidades_por_empaque:
+        ptids.product_id.product_tmpl_id['x_studio_costo_por_empaque'] = p * int(ptids.product_id.product_tmpl_id['x_studio_unidades_por_empaque'])
+    else:
+        ptids.product_id.product_tmpl_id['x_studio_costo_por_empaque'] = p
+            </field>
+    	</record>
+	</data>
+</odoo>

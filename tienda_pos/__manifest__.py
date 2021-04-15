@@ -23,13 +23,7 @@
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
-        #'views/views.xml',
-        #'views/templates.xml',
+        'data/ultima_compra.xml',
     ],
     'qweb': ['static/src/xml/tienda_pos.xml'],
-    # only loaded in demonstration mode
-    'demo': [
-        'demo/demo.xml',
-    ],
 }

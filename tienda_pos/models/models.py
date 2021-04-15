@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-
 from odoo import models, fields, api
 
-# class tienda_pos(models.Model):
-#     _name = 'tienda_pos.tienda_pos'
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
 
-#     name = fields.Char()
-#     value = fields.Integer()
-#     value2 = fields.Float(compute="_value_pc", store=True)
-#     description = fields.Text()
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         self.value2 = float(self.value) / 100
+    x_reordenar = fields.Boolean(compute='_get_is_low_stock',
+                                              string="Stock Bajo",
+                                              store=True)
+
+    @api.depends('qty_available','reordering_min_qty')
+    def _get_is_low_stock(self):
+        for r in self:
+            if r.qty_available < r.reordering_min_qty:
+                r['x_reordenar'] = True
