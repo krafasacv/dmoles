@@ -8,8 +8,13 @@ class ProductTemplate(models.Model):
                                               string="Stock Bajo",
                                               store=True)
 
-    @api.depends('qty_available','reordering_min_qty')
+    @api.depends('qty_available','reordering_min_qty','virtual_available')
     def _get_is_low_stock(self):
         for r in self:
             if r.qty_available < r.reordering_min_qty:
-                r['x_reordenar'] = True
+                if r.qty_available == r.virtual_available:
+                    r['x_reordenar'] = True
+                else:
+                    r['x_reordenar'] = False
+            else:
+                r['x_reordenar'] = False
